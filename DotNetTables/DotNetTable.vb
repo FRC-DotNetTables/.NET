@@ -123,7 +123,10 @@ Public Class DotNetTable
     End Property
 
 
-    Public Sub setVal(key As String, value As String)
+
+
+
+    Public Sub setValue(key As String, value As String)
         throwIfNotWritable()
         If _data.ContainsKey(key) Then
             _data.Item(key) = value
@@ -133,12 +136,12 @@ Public Class DotNetTable
         _lastUpdate = Now.Millisecond
     End Sub
 
-    Public Sub setVal(key As String, value As Double)
-        setVal(key, value.ToString)
+    Public Sub setValue(key As String, value As Double)
+        setValue(key, value.ToString)
     End Sub
 
-    Public Sub setVal(key As String, value As Integer)
-        setVal(key, value.ToString)
+    Public Sub setValue(key As String, value As Integer)
+        setValue(key, value.ToString)
     End Sub
 
     Public Sub remove(key As String)
@@ -146,8 +149,8 @@ Public Class DotNetTable
         _data.Remove(key)
     End Sub
 
-    Public Function getVal(key As String) As String
-        getVal = _data.Item(key)
+    Public Function getValue(key As String) As String
+        getValue = _data.Item(key)
     End Function
 
     Public Function getDouble(key As String) As Double
@@ -184,7 +187,7 @@ Public Class DotNetTable
 
     Public Sub send()
         throwIfNotWritable()
-        setVal(UPDATE_INTERVAL, getInterval())
+        setValue(UPDATE_INTERVAL, getInterval())
         DotNetTables.push(_name, HMtoSA(_data))
 
 
@@ -225,7 +228,7 @@ Public Class DotNetTable
             If out.ContainsKey(data.get(i)) = False Then
                 out.Add(data.get(i), data.get(i + setSize))
             Else
-
+                out.Item(data.get(i)) = data.get(i + setSize)
             End If
         Next
         Return out
