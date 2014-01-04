@@ -3,6 +3,7 @@ Imports edu.wpi.first.wpilibj
 Imports edu.wpi.first.wpilibj.networktables
 Imports edu.wpi.first.wpilibj.networktables.NetworkTable
 Imports System.IO
+Imports java.lang
 
 Public Class DotNetTables
 
@@ -10,18 +11,17 @@ Public Class DotNetTables
 
     'The table name used for the underlying NetworkTable
     Public Const TABLE_NAME As String = "DotNet"
-    Private nt_table As NetworkTable
-    Private client As Boolean = False
-    Private connected As Boolean = False
-    Private DotNetTable() As ArrayList
-    Private tables As List(Of DotNetTable)
+    Private Shared nt_table As NetworkTable
+    Private Shared client As Boolean = False
+    Private Shared connected As Boolean = False
+    Private Shared DotNetTable() As ArrayList
+    Private Shared tables As List(Of DotNetTable)
 
-    Private Sub init()
+    Private Shared Sub init()
         tables = New List(Of DotNetTable)
 
         'Attempt to init the underlying NetworkTable
         Try
-
             NetworkTable.initialize()
             nt_table = NetworkTable.getTable(TABLE_NAME)
             connected = True
@@ -32,12 +32,12 @@ Public Class DotNetTables
 
     End Sub
 
-    Public Sub startServer()
+    Public Shared Sub startServer()
         init()
     End Sub
 
 
-    Public Sub startClient(IP As String)
+    Public Shared Sub startClient(IP As String)
         NetworkTable.setClientMode()
 
         If Regex.Match(IP, "^\\d{4}$").Success Then
@@ -57,14 +57,14 @@ Public Class DotNetTables
     '/**
     '* @return True if this device is configured as a NetworkTable subscriber
     ' */
-    Public Function isClient() As Boolean
+    Public Shared Function isClient() As Boolean
         Return client
     End Function
 
     '/**
     ' * @return True if the connection has been successfully initialized
     ' */
-    Public Function isConnected() As Boolean
+    Public Shared Function isConnected() As Boolean
         Return connected
     End Function
 
@@ -75,7 +75,7 @@ Public Class DotNetTables
     ' * @return The specified table, if available. NULL if no such table exists.
     ' */
 
-    Public Function findTable(name As String) As DotNetTable
+    Public Shared Function findTable(name As String) As DotNetTable
         For Each table As DotNetTable In tables
             If table.name = name Then
                 Return table
@@ -93,7 +93,7 @@ Public Class DotNetTables
     ' * @param name Name of the table to subscribe
     ' * @return The subscribed table
     ' */
-    Public Function subscribe(name As String) As DotNetTable
+    Public Shared Function subscribe(name As String) As DotNetTable
         Return getTable(name, False)
     End Function
 
@@ -103,7 +103,7 @@ Public Class DotNetTables
     ' * @param name Name of the table to publish
     ' * @return The published table
     ' */
-    Public Function publish(name As String) As DotNetTable
+    Public Shared Function publish(name As String) As DotNetTable
         Return getTable(name, True)
     End Function
 
@@ -113,7 +113,7 @@ Public Class DotNetTables
     ' * @param name New or existing table name
     ' * @return The table to get/create
     ' */
-    Private Function getTable(name As String, writable As Boolean) As DotNetTable
+    Private Shared Function getTable(name As String, writable As Boolean) As DotNetTable
         Dim table As DotNetTable
         Try
             table = findTable(name)
@@ -143,7 +143,7 @@ Public Class DotNetTables
     ' *
     ' * @param name The table to remove
     ' */
-    Public Sub drop(name As String)
+    Public Shared Sub drop(name As String)
         Try
             Dim table As DotNetTable = findTable(name)
             nt_table.removeTableListener(table)
@@ -160,8 +160,8 @@ Public Class DotNetTables
     ' * @param name DotNetTable name
     ' * @param data StringArray-packed DotNetTable data
     ' */
-    Public Sub push(name As String, data As Object)
-        If Not isClient() Then
+    Public Shared Sub push(name As String, data As Object)
+        If Not isConnected() Then
             Throw New IllegalStateException("NetworkTable not initalized")
         End If
         nt_table.putValue(name, data)

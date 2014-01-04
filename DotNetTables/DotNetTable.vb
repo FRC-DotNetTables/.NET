@@ -1,6 +1,7 @@
 ﻿Imports edu.wpi.first.wpilibj
 Imports edu.wpi.first.wpilibj.tables
 Imports edu.wpi.first.wpilibj.networktables2.type
+Imports java.lang
 
 
 
@@ -42,7 +43,7 @@ Public Class DotNetTable
 
         'Tables are stale when we miss STALE_FACTOR update intervals
         Dim age As Double = Now.Millisecond - _lastUpdate
-        If age > _updateInterval * STALE_FACTOR Then
+        If age > (_updateInterval * STALE_FACTOR) Then
             Return True
         End If
 
@@ -140,6 +141,10 @@ Public Class DotNetTable
         setVal(key, value.ToString)
     End Sub
 
+    Public Sub remove(key As String)
+        throwIfNotWritable()
+        _data.Remove(key)
+    End Sub
 
     Public Function getVal(key As String) As String
         getVal = _data.Item(key)
@@ -154,10 +159,7 @@ Public Class DotNetTable
     End Function
 
 
-    Public Sub remove(key As String)
-        throwIfNotWritable()
-        _data.Remove(key)
-    End Sub
+
 
 
 
@@ -183,7 +185,8 @@ Public Class DotNetTable
     Public Sub send()
         throwIfNotWritable()
         setVal(UPDATE_INTERVAL, getInterval())
-        DotNetTables.push(name, HMtoSA(_data))
+        DotNetTables.push(_name, HMtoSA(_data))
+
 
         'Dispatch our callback, if any
         If (changeCallback IsNot Nothing) Then
@@ -197,11 +200,13 @@ Public Class DotNetTable
     Private Function HMtoSA(data As Dictionary(Of String, String)) As StringArray
         Dim out As New StringArray
         For Each key In data.Keys
-            out.Add(key)
+            out.add(key)
         Next
 
-        For Each key In data
-            out.add(data.Item(key))
+        'Use the output list of keys as the iterator to ensure correct value ordering
+        Dim size As Integer = out.size
+        For i = 0 To size Step 2
+            out.add(data.Item(out.get(i)))
         Next
 
         Return out
@@ -216,10 +221,14 @@ Public Class DotNetTable
         End If
 
         Dim setSize As Integer = data.size / 2
-        For i = 0 To setSize
-            out.Add(data.get(i), data.get(i + setSize))
+        For i = 0 To setSize Step 2
+            If out.ContainsKey(data.get(i)) = False Then
+                out.Add(data.get(i), data.get(i + setSize))
+            Else
+
+            End If
         Next
-        SAtoHM = out
+        Return out
     End Function
 
 
@@ -237,7 +246,7 @@ Public Class DotNetTable
         End If
 
         'store the new data
-        Dim value As StringArray
+        Dim value As New StringArray
         itable.retrieveValue(key, value)
         recv(value)
     End Sub
