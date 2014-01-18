@@ -16,23 +16,23 @@ Public Class DotNetTables
     Private Shared connected As Boolean = False
     Private Shared DotNetTable() As ArrayList
     Private Shared tables As List(Of DotNetTable)
-    Private Const sync_Lock As Object = Nothing
+    Private Shared sync_Lock As New Object
 
 
     Private Shared Sub init()
-        SyncLock (sync_Lock)
+        SyncLock sync_Lock
 
-        tables = New List(Of DotNetTable)
+            tables = New List(Of DotNetTable)
 
-        'Attempt to init the underlying NetworkTable
-        Try
-            NetworkTable.initialize()
-            nt_table = NetworkTable.getTable(TABLE_NAME)
-            connected = True
-        Catch ex As IOException
-            Debug.Print("Unable to initialize NetworkTable: " & TABLE_NAME)
-            Throw ex
-        End Try
+            'Attempt to init the underlying NetworkTable
+            Try
+                NetworkTable.initialize()
+                nt_table = NetworkTable.getTable(TABLE_NAME)
+                connected = True
+            Catch ex As IOException
+                Debug.Print("Unable to initialize NetworkTable: " & TABLE_NAME)
+                Throw ex
+            End Try
         End SyncLock
     End Sub
 
@@ -118,7 +118,7 @@ Public Class DotNetTables
     ' * @return The table to get/create
     ' */
     Private Shared Function getTable(name As String, writable As Boolean) As DotNetTable
-        SyncLock (sync_Lock)
+        SyncLock sync_Lock
             Dim table As DotNetTable
             Try
                 table = findTable(name)
@@ -150,7 +150,7 @@ Public Class DotNetTables
     ' * @param name The table to remove
     ' */
     Public Shared Sub drop(name As String)
-        SyncLock (sync_Lock)
+        SyncLock sync_Lock
             Try
                 Dim table As DotNetTable = findTable(name)
                 nt_table.removeTableListener(table)
@@ -169,7 +169,7 @@ Public Class DotNetTables
     ' * @param data StringArray-packed DotNetTable data
     ' */
     Public Shared Sub push(name As String, data As Object)
-        SyncLock (sync_Lock)
+        SyncLock sync_Lock
             If Not isConnected() Then
                 Throw New IllegalStateException("NetworkTable not initalized")
             End If

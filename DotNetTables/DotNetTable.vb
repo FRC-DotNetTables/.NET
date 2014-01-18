@@ -208,7 +208,7 @@ Public Class DotNetTable
 
         'Use the output list of keys as the iterator to ensure correct value ordering
         Dim size As Integer = out.size
-        For i = 0 To size
+        For i = 0 To size - 1
             out.add(data.Item(out.get(i)))
         Next
 
@@ -224,7 +224,7 @@ Public Class DotNetTable
         End If
 
         Dim setSize As Integer = data.size / 2
-        For i = 0 To setSize
+        For i = 0 To setSize - 1
             out.AddOrUpdate(data.get(i), data.get(i + setSize), Function(key, value) value)
         Next
 
