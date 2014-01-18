@@ -47,9 +47,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Resources\IKVM.OpenJDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Network_Tables, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Resources\Network_Tables.dll</HintPath>
+      <HintPath>Resources\IKVM.OpenJDK.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="networktables-desktop, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\networktables-desktop.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

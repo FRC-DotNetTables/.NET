@@ -2,6 +2,7 @@
 Imports edu.wpi.first.wpilibj.tables
 Imports edu.wpi.first.wpilibj.networktables2.type
 Imports java.lang
+Imports System.Collections.Concurrent
 
 
 
@@ -13,7 +14,7 @@ Public Class DotNetTable
     Private _name As String
     Private _updateInterval As Integer
     Private _writable As Boolean
-    Public _data As Dictionary(Of String, String)
+    Public _data As ConcurrentDictionary(Of String, String)
     Private changeCallback As DotNetTableEvents
     Private staleCallback As DotNetTableEvents
     Private _lastUpdate As Long
@@ -26,7 +27,7 @@ Public Class DotNetTable
         Me._updateInterval = -1
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
-        _data = New Dictionary(Of String, String)
+        _data = New ConcurrentDictionary(Of String, String)
     End Sub
 
     Public ReadOnly Property name As String
@@ -108,7 +109,7 @@ Public Class DotNetTable
     End Sub
 
 
-    Public ReadOnly Property Keys As Dictionary(Of String, String).KeyCollection
+    Public ReadOnly Property Keys As ICollection(Of String)
         Get
             Keys = _data.Keys
         End Get
@@ -128,11 +129,9 @@ Public Class DotNetTable
 
     Public Sub setValue(key As String, value As String)
         throwIfNotWritable()
-        If _data.ContainsKey(key) Then
-            _data.Item(key) = value
-        Else
-            _data.Add(key, value)
-        End If
+
+        _data.AddOrUpdate(key, value, Function(key1, value1) value)
+
         _lastUpdate = Now.Millisecond
     End Sub
 
@@ -146,7 +145,8 @@ Public Class DotNetTable
 
     Public Sub remove(key As String)
         throwIfNotWritable()
-        _data.Remove(key)
+        Dim Value As String = ""
+        _data.TryRemove(key, Value)
     End Sub
 
     Public Function getValue(key As String) As String
@@ -200,7 +200,7 @@ Public Class DotNetTable
 
 
 
-    Private Function HMtoSA(data As Dictionary(Of String, String)) As StringArray
+    Private Function HMtoSA(data As ConcurrentDictionary(Of String, String)) As StringArray
         Dim out As New StringArray
         For Each key In data.Keys
             out.add(key)
@@ -208,7 +208,7 @@ Public Class DotNetTable
 
         'Use the output list of keys as the iterator to ensure correct value ordering
         Dim size As Integer = out.size
-        For i = 0 To size Step 2
+        For i = 0 To size
             out.add(data.Item(out.get(i)))
         Next
 
@@ -216,23 +216,21 @@ Public Class DotNetTable
     End Function
 
 
-    Private Function SAtoHM(data As StringArray) As Dictionary(Of String, String)
-        Dim out As New Dictionary(Of String, String)
+    Private Function SAtoHM(data As StringArray) As ConcurrentDictionary(Of String, String)
+        Dim out As New ConcurrentDictionary(Of String, String)
 
         If data.size Mod 2 <> 0 Then
             Throw New ArrayIndexOutOfBoundsException("StringArray contains an odd number of elements")
         End If
 
         Dim setSize As Integer = data.size / 2
-        For i = 0 To setSize Step 2
-            If out.ContainsKey(data.get(i)) = False Then
-                out.Add(data.get(i), data.get(i + setSize))
-            Else
-                out.Item(data.get(i)) = data.get(i + setSize)
-            End If
+        For i = 0 To setSize
+            out.AddOrUpdate(data.get(i), data.get(i + setSize), Function(key, value) value)
         Next
+
         Return out
     End Function
+
 
 
     '* Update with new data from a remote subscribed table

@@ -16,8 +16,12 @@ Public Class DotNetTables
     Private Shared connected As Boolean = False
     Private Shared DotNetTable() As ArrayList
     Private Shared tables As List(Of DotNetTable)
+    Private Const sync_Lock As Object = Nothing
+
 
     Private Shared Sub init()
+        SyncLock (sync_Lock)
+
         tables = New List(Of DotNetTable)
 
         'Attempt to init the underlying NetworkTable
@@ -29,7 +33,7 @@ Public Class DotNetTables
             Debug.Print("Unable to initialize NetworkTable: " & TABLE_NAME)
             Throw ex
         End Try
-
+        End SyncLock
     End Sub
 
     Public Shared Sub startServer()
@@ -40,9 +44,9 @@ Public Class DotNetTables
     Public Shared Sub startClient(IP As String)
         NetworkTable.setClientMode()
 
-        If Regex.Match(IP, "^\\d{4}$").Success Then
+        If Regex.Match(IP, "^\d{4}$").Success Then
             NetworkTable.setTeam(CInt(IP))
-        ElseIf Regex.Match(IP, "^(?:\\d{1,3}.){3}\\d{1,3}$").Success Then
+        ElseIf Regex.Match(IP, "^(?:\d{1,3}.){3}\d{1,3}$").Success Then
             NetworkTable.setIPAddress(IP)
         Else
             Throw New IllegalArgumentException("Invalid IP address or team number: " & IP)
@@ -114,27 +118,29 @@ Public Class DotNetTables
     ' * @return The table to get/create
     ' */
     Private Shared Function getTable(name As String, writable As Boolean) As DotNetTable
-        Dim table As DotNetTable
-        Try
-            table = findTable(name)
-        Catch ex As IllegalArgumentException
-            table = New DotNetTable(name, writable)
-            tables.Add(table)
+        SyncLock (sync_Lock)
+            Dim table As DotNetTable
+            Try
+                table = findTable(name)
+            Catch ex As IllegalArgumentException
+                table = New DotNetTable(name, writable)
+                tables.Add(table)
 
-            'Publish or subscribe the new table
-            If writable = True Then
-                table.send()
-            Else
-                nt_table.addTableListener(table)
+                'Publish or subscribe the new table
+                If writable = True Then
+                    table.send()
+                Else
+                    nt_table.addTableListener(table)
+                End If
+            End Try
+
+            'Ensure the table has the specified writable state
+            If table.iswritable() <> writable Then
+                Throw New IllegalStateException("Table already exists but does not share writable state: " & name)
             End If
-        End Try
 
-        'Ensure the table has the specified writable state
-        If table.iswritable() <> writable Then
-            Throw New IllegalStateException("Table already exists but does not share writable state: " & name)
-        End If
-
-        Return table
+            Return table
+        End SyncLock
     End Function
 
 
@@ -144,13 +150,15 @@ Public Class DotNetTables
     ' * @param name The table to remove
     ' */
     Public Shared Sub drop(name As String)
-        Try
-            Dim table As DotNetTable = findTable(name)
-            nt_table.removeTableListener(table)
-            tables.Remove(table)
-        Catch ex As IllegalArgumentException
-            'Ignore invalid drop requests
-        End Try
+        SyncLock (sync_Lock)
+            Try
+                Dim table As DotNetTable = findTable(name)
+                nt_table.removeTableListener(table)
+                tables.Remove(table)
+            Catch ex As IllegalArgumentException
+                'Ignore invalid drop requests
+            End Try
+        End SyncLock
     End Sub
 
 
@@ -161,10 +169,24 @@ Public Class DotNetTables
     ' * @param data StringArray-packed DotNetTable data
     ' */
     Public Shared Sub push(name As String, data As Object)
-        If Not isConnected() Then
-            Throw New IllegalStateException("NetworkTable not initalized")
-        End If
-        nt_table.putValue(name, data)
+        SyncLock (sync_Lock)
+            If Not isConnected() Then
+                Throw New IllegalStateException("NetworkTable not initalized")
+            End If
+            Dim table As DotNetTable
+
+            Try
+                table = findTable(name)
+            Catch ex As IllegalArgumentException
+                Throw New IllegalStateException(ex.Message)
+            End Try
+
+            If table.iswritable = False Then
+                Throw New IllegalStateException("Table not writable: " & name)
+            End If
+
+            nt_table.putValue(name, data)
+        End SyncLock
     End Sub
 
 
