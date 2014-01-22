@@ -46,21 +46,25 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetTables">
-      <HintPath>..\..\.NET\DotNetTables\bin\Debug\DotNetTables.dll</HintPath>
+    <Reference Include="DotNetTables, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DotNetTables\DotNetTables\Resources\DotNetTables.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Core, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\.NET\DotNetTables\Resources\IKVM.OpenJDK.Core.dll</HintPath>
+      <HintPath>..\..\DotNetTables\DotNetTables\Resources\IKVM.OpenJDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.Util">
-      <HintPath>..\..\.NET\DotNetTables\Resources\IKVM.OpenJDK.Util.dll</HintPath>
+    <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DotNetTables\DotNetTables\Resources\IKVM.OpenJDK.Util.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.Runtime">
-      <HintPath>..\..\.NET\DotNetTables\Resources\IKVM.Runtime.dll</HintPath>
+    <Reference Include="IKVM.Runtime, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DotNetTables\DotNetTables\Resources\IKVM.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="networktables-desktop">
-      <HintPath>..\..\.NET\DotNetTables\bin\Debug\networktables-desktop.dll</HintPath>
+    <Reference Include="networktables-desktop, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DotNetTables\DotNetTables\Resources\networktables-desktop.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
