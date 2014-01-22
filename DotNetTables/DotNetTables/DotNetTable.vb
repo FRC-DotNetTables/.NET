@@ -6,6 +6,7 @@ Imports System.Collections.Concurrent
 
 
 
+
 Public Class DotNetTable
     Implements ITableListener
 
@@ -20,7 +21,7 @@ Public Class DotNetTable
     Private _lastUpdate As Long
 
 
-    Public Sub New(name As String, writable As Boolean)
+    Protected Friend Sub New(name As String, writable As Boolean)
         Me._lastUpdate = 0
         Me._name = name
         Me._writable = writable
