@@ -59,5 +59,45 @@ Namespace My.Resources
                 resourceCulture = value
             End Set
         End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property IKVM_OpenJDK_Core() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("IKVM_OpenJDK_Core", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property IKVM_OpenJDK_Util() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("IKVM_OpenJDK_Util", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property IKVM_Runtime() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("IKVM_Runtime", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property networktables_desktop() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("networktables_desktop", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
     End Module
 End Namespace

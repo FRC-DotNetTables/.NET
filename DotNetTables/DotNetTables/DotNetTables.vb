@@ -18,6 +18,9 @@ Public Class DotNetTables
     Private Shared tables As List(Of DotNetTable)
     Private Shared sync_Lock As New Object
 
+    Private Shared _initialized As Boolean 'for loading dlls
+
+
 
     Private Shared Sub init()
         SyncLock sync_Lock
@@ -188,6 +191,20 @@ Public Class DotNetTables
             nt_table.putValue(name, data)
         End SyncLock
     End Sub
+
+    Public Shared Function ResolveAssemblies(sender As Object, e As System.ResolveEventArgs) As Reflection.Assembly
+        Dim desiredAssembly = New Reflection.AssemblyName(e.Name)
+
+        'Convert the requested assembly name to the embedded assembly name
+        Dim AssemblyName As String = desiredAssembly.Name
+        Dim rgx As New Regex("\W")
+        AssemblyName = rgx.Replace(AssemblyName, "_")
+        MsgBox(AssemblyName)
+
+        Return Reflection.Assembly.Load(My.Resources.ResourceManager.GetObject(AssemblyName))
+
+    End Function
+
 
 
 End Class

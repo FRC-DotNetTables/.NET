@@ -1,14 +1,24 @@
-﻿Public Class test
+﻿Imports System.Threading
+Imports DotNetTables
 
-    Private Sub test_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+Public Class test
 
-
-
-    End Sub
-
+    Private Trd As Thread
 
     Private Sub StartBtn_Click(sender As Object, e As EventArgs) Handles StartBtn.Click
         Dim MyServer As New Server
-        MyServer.run()
+        Trd = New Thread(AddressOf MyServer.run)
+        Trd.IsBackground = True
+        Trd.Start()
+
+        StartBtn.Enabled = False
     End Sub
+
+
+    Public Sub UpdateOutput(table As DotNetTable)
+
+    End Sub
+
+
+
 End Class

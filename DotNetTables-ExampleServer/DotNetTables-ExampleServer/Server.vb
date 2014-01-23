@@ -52,6 +52,7 @@ Public Class Server
             Debug.Print(key & " >= " & table.getValue(key))
         Next
 
+        'test.UpdateOutput(table)
     End Sub
 
 
