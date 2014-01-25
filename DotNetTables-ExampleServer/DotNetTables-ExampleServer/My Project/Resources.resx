@@ -117,20 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DotNetTables" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DotNetTables.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="IKVM_OpenJDK_Core" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\IKVM.OpenJDK.Core.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="IKVM_OpenJDK_Util" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\IKVM.OpenJDK.Util.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="IKVM_Runtime" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\IKVM.Runtime.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="networktables_desktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\networktables-desktop.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
 </root>
