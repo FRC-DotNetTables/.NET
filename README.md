@@ -23,4 +23,4 @@ If you have questions feel free to mail:
 .NET Implementation
 -------------------
 
-.NET implementation of the DotNetTables interface for FRC NetworkTables
+In the [dist](dist/) folder you'll find [DotNetTables.dll](dist/DotNetTables.dll) and [ApplicationEvents.vb](dist/ApplicationEvents.vb).
