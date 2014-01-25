@@ -51,6 +51,8 @@ Public Class Client
             Dim key As String = it
             Debug.Print(key & " >= " & table.getValue(key))
         Next
+
+
     End Sub
 
 

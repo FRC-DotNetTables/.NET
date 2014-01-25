@@ -39,6 +39,7 @@ Partial Class Test
         '
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(32, 27)
+        Me.Label1.MaximumSize = New System.Drawing.Size(275, 0)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(0, 13)
         Me.Label1.TabIndex = 3
