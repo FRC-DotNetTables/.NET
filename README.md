@@ -23,4 +23,12 @@ If you have questions feel free to mail:
 .NET Implementation
 -------------------
 
-In the [dist](dist/) folder you'll find [DotNetTables.dll](dist/DotNetTables.dll) and [ApplicationEvents.vb](dist/ApplicationEvents.vb).
+In the [dist](dist/) folder you'll find [DotNetTables.dll](dist/DotNetTables.dll), [networktables-desktop.dll](dist/networktables.dll), and [ApplicationEvents.vb](dist/ApplicationEvents.vb).
+
+DotNetTables will need to be added as a reference and distributed with your project. 
+
+networktables-desktop.dll is a .NET conversion of java networktables. It should also be added as a reference to your project but doesn't need to be distributed with the project.	
+
+Other necessary assemblies are embedded in DotNetTables. A handler will need to be added to ApplicationEvents to properly handle the AssemblyResolve event.
+
+http://msdn.microsoft.com/en-us/library/system.appdomain.assemblyresolve(v=vs.110).aspx 
