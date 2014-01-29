@@ -195,14 +195,6 @@ Public Class DotNetTables
     Public Shared Function ResolveAssemblies(sender As Object, e As System.ResolveEventArgs) As Reflection.Assembly
         Dim desiredAssembly = New Reflection.AssemblyName(e.Name)
 
-        'Convert the requested assembly name to the embedded assembly name
-        'Dim AssemblyName As String = desiredAssembly.Name
-        'Dim rgx As New Regex("\W")
-        'AssemblyName = rgx.Replace(AssemblyName, "_")
-        'MsgBox(AssemblyName)
-
-        'Return Reflection.Assembly.Load(My.Resources.ResourceManager.GetObject(AssemblyName))
-
         Select Case desiredAssembly.Name
             Case "IKVM.OpenJDK.Core"
                 Return Reflection.Assembly.Load(My.Resources.IKVM_OpenJDK_Core)
@@ -210,8 +202,6 @@ Public Class DotNetTables
                 Return Reflection.Assembly.Load(My.Resources.IKVM_OpenJDK_Util)
             Case "IKVM.Runtime"
                 Return Reflection.Assembly.Load(My.Resources.IKVM_Runtime)
-            Case "networktables-desktop"
-                Return Reflection.Assembly.Load(My.Resources.networktables_desktop)
             Case Else
                 Return Nothing
         End Select

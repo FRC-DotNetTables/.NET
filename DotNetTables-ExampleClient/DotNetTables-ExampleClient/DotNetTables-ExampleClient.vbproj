@@ -51,25 +51,10 @@
       <HintPath>..\..\DotNetTables\DotNetTables\Resources\DotNetTables.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.Core, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DotNetTables\DotNetTables\Resources\IKVM.OpenJDK.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DotNetTables\DotNetTables\Resources\IKVM.OpenJDK.Util.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="IKVM.Runtime, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DotNetTables\DotNetTables\Resources\IKVM.Runtime.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="networktables-desktop, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DotNetTables\DotNetTables\Resources\networktables-desktop.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -94,6 +79,11 @@
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Client.vb" />
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Test.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -113,6 +103,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Test.resx">
       <DependentUpon>Test.vb</DependentUpon>
     </EmbeddedResource>
@@ -129,8 +124,12 @@
     </None>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <EmbeddedResource Include="Resources\DotNetTables.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\networktables-desktop.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
