@@ -23,12 +23,12 @@ If you have questions feel free to mail:
 .NET Implementation
 -------------------
 
-In the [dist](dist/) folder you'll find [DotNetTables.dll](dist/DotNetTables.dll), [networktables-desktop.dll](dist/networktables.dll), and [ApplicationEvents.vb](dist/ApplicationEvents.vb).
+In the [Dist](Dist/) folder you'll find [DotNetTables.dll](Dist/DotNetTables.dll), [networktables-desktop.dll](Dist/networktables.dll), and [ApplicationEvents.vb](Dist/ApplicationEvents.vb).
 
-DotNetTables will need to be added as a reference and distributed with your project. 
+DotNetTables.dll contains all of the code from this project. It must be referenced in your project at build time and distributed with any resulting exectuables.
 
-networktables-desktop.dll is a .NET conversion of java networktables. It should also be added as a reference to your project but doesn't need to be distributed with the project.	
+networktables-desktop.dll is a .NET conversion of the FRC's Java-based NetworkTables implementation. You may use it indepently, but be aware that the converted code relies on a number of IKVM DLLs, so even if you do not intend to use DotNetTables you may wish to take advantage of the embedded assembly loading it provides.
 
-Other necessary assemblies are embedded in DotNetTables. A handler will need to be added to ApplicationEvents to properly handle the AssemblyResolve event.
+DotNetTables.dll depends on networktables-desktop.dll at build time, but DotNetTables.dll already embeds a copy of networktables-desktop.dll for use at runtime, so it is not necessary to distribute networktables-desktop.dll with executables built against DotNetTables.dll.
 
-http://msdn.microsoft.com/en-us/library/system.appdomain.assemblyresolve(v=vs.110).aspx 
+Because DotNetTables embeds other assemblies your project must include an ApplicationEvents handler that facilitates loading from the embedded resources. Specifically you'll need to handle the AssemblyResolve event, which is documented here: [http://msdn.microsoft.com/en-us/library/system.appdomain.assemblyresolve(v=vs.110).aspx]
