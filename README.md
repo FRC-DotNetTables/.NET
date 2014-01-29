@@ -31,4 +31,4 @@ networktables-desktop.dll is a .NET conversion of the FRC's Java-based NetworkTa
 
 DotNetTables.dll depends on networktables-desktop.dll at build time, but DotNetTables.dll already embeds a copy of networktables-desktop.dll for use at runtime, so it is not necessary to distribute networktables-desktop.dll with executables built against DotNetTables.dll.
 
-Because DotNetTables embeds other assemblies your project must include an ApplicationEvents handler that facilitates loading from the embedded resources. Specifically you'll need to handle the AssemblyResolve event, which is documented here: [http://msdn.microsoft.com/en-us/library/system.appdomain.assemblyresolve(v=vs.110).aspx]
+Because DotNetTables embeds other assemblies your project must include an ApplicationEvents handler that facilitates loading from the embedded resources. Specifically you'll need to handle the AssemblyResolve event, which is documented here: http://msdn.microsoft.com/en-us/library/system.appdomain.assemblyresolve(v=vs.110).aspx
