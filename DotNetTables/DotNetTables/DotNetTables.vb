@@ -202,6 +202,8 @@ Public Class DotNetTables
                 Return Reflection.Assembly.Load(My.Resources.IKVM_OpenJDK_Util)
             Case "IKVM.Runtime"
                 Return Reflection.Assembly.Load(My.Resources.IKVM_Runtime)
+            Case "networktables-desktop"
+                Return Reflection.Assembly.Load(My.Resources.networktables_desktop)
             Case Else
                 Return Nothing
         End Select
