@@ -177,6 +177,7 @@ Public Class DotNetTable
         'note the published update interval
         If exists(UPDATE_INTERVAL) Then
             _updateInterval = getInt(UPDATE_INTERVAL)
+            _data.TryRemove(UPDATE_INTERVAL, "")
         End If
 
         'dispatch our callback, if any
