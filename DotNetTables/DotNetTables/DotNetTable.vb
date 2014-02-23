@@ -30,7 +30,7 @@ Public Class DotNetTable
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
         Me._data = New ConcurrentDictionary(Of String, String)
-        Me.timer = Nothing
+        Me.timer = New Timers.Timer
         AddHandler timer.Elapsed, AddressOf TimerElaspsed
     End Sub
 
@@ -78,9 +78,7 @@ Public Class DotNetTable
         End If
     End Sub
 
-
-
-    Public Sub TimerElaspsed()
+    Private Sub TimerElaspsed()
         If Me.iswritable Then
             Me.send()
         Else
