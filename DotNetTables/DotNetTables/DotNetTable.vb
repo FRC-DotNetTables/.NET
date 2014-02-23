@@ -44,7 +44,8 @@ Public Class DotNetTable
         End If
 
         'Tables are stale when we miss STALE_FACTOR update intervals
-        Dim age As Double = Now.Millisecond - _lastUpdate
+        Dim age As Double = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds - _lastUpdate
+
         If age > (_updateInterval * STALE_FACTOR) Then
             Return True
         End If
@@ -125,15 +126,12 @@ Public Class DotNetTable
     End Property
 
 
-
-
-
     Public Sub setValue(key As String, value As String)
         throwIfNotWritable()
 
         _data.AddOrUpdate(key, value, Function(key1, value1) value)
 
-        _lastUpdate = Now.Millisecond
+        _lastUpdate = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds
     End Sub
 
     Public Sub setValue(key As String, value As Double)
@@ -172,7 +170,7 @@ Public Class DotNetTable
     Private Sub recv(value As StringArray)
         'unpack the new data
         _data = SAtoHM(value)
-        _lastUpdate = Now.Millisecond
+        _lastUpdate = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds
 
         'note the published update interval
         If exists(UPDATE_INTERVAL) Then
