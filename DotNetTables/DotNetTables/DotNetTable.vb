@@ -3,18 +3,19 @@ Imports edu.wpi.first.wpilibj.tables
 Imports edu.wpi.first.wpilibj.networktables2.type
 Imports java.lang
 Imports System.Collections.Concurrent
-
+Imports System.Timers
 
 
 
 Public Class DotNetTable
     Implements ITableListener
 
-    Public Const STALE_FACTOR As Double = 2.5
+    Public Const STALE_FACTOR As Double = 2.1
     Public Const UPDATE_INTERVAL As String = "_UPDATE_INTERVAL"
     Private _name As String
     Private _updateInterval As Integer
     Private _writable As Boolean
+    Private timer As Timers.Timer
     Public _data As ConcurrentDictionary(Of String, String)
     Private changeCallback As DotNetTableEvents
     Private staleCallback As DotNetTableEvents
@@ -28,7 +29,9 @@ Public Class DotNetTable
         Me._updateInterval = -1
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
-        _data = New ConcurrentDictionary(Of String, String)
+        Me._data = New ConcurrentDictionary(Of String, String)
+        Me.timer = Nothing
+        AddHandler timer.Elapsed, AddressOf TimerElaspsed
     End Sub
 
     Public ReadOnly Property name As String
@@ -45,7 +48,6 @@ Public Class DotNetTable
 
         'Tables are stale when we miss STALE_FACTOR update intervals
         Dim age As Double = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds - _lastUpdate
-
         If age > (_updateInterval * STALE_FACTOR) Then
             Return True
         End If
@@ -77,13 +79,33 @@ Public Class DotNetTable
     End Sub
 
 
+
+    Public Sub TimerElaspsed()
+        If Me.iswritable Then
+            Me.send()
+        Else
+            If Me.staleCallback IsNot Nothing Then
+                Me.staleCallback.stale(Me)
+            End If
+        End If
+    End Sub
+
+    Private Sub resetTimer()
+        If timer IsNot Nothing Then
+            timer.Stop()
+        End If
+
+        If _updateInterval >= 0 Then
+            timer.Interval = (_updateInterval * 1000)
+            timer.Start()
+        End If
+    End Sub
+
     Public ReadOnly Property getInterval As Integer
         Get
             getInterval = _updateInterval
         End Get
     End Property
-
-
 
     Public Sub setInterval(update As Integer)
         throwIfNotWritable()
@@ -91,6 +113,7 @@ Public Class DotNetTable
             update = -1
         End If
         _updateInterval = update
+        resetTimer()
     End Sub
 
     Public Sub onChange(callback As DotNetTableEvents)
@@ -103,7 +126,6 @@ Public Class DotNetTable
             Throw New IllegalStateException("Table is local: " & _name)
         End If
         staleCallback = callback
-        Throw New UnsupportedOperationException("Not supported yet.")
     End Sub
 
     Public Sub clear()
@@ -176,6 +198,7 @@ Public Class DotNetTable
         If exists(UPDATE_INTERVAL) Then
             _updateInterval = getInt(UPDATE_INTERVAL)
             _data.TryRemove(UPDATE_INTERVAL, "")
+            resetTimer()
         End If
 
         'dispatch our callback, if any
@@ -189,7 +212,7 @@ Public Class DotNetTable
         throwIfNotWritable()
         setValue(UPDATE_INTERVAL, getInterval())
         DotNetTables.push(_name, HMtoSA(_data))
-
+        resetTimer()
 
         'Dispatch our callback, if any
         If (changeCallback IsNot Nothing) Then
@@ -264,3 +287,5 @@ Public Class DotNetTable
     End Interface
 
 End Class
+
+
