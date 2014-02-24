@@ -35,6 +35,6 @@ Because DotNetTables embeds other assemblies your project must include an Applic
 
 It is important to register this event early in the loading process, before you reference DotNetTables or any of its dependencies. An easy way to do this is to register the AssemblyResolve handler during the Me.Startup event, which typically dispatches the AppStart method. An example of this registration is provided in [ApplicationEvents.vb](Dist/ApplicationEvents.vb).
 
-SampleClient and SampleServer provide very simple usage examples as well as automatically-updating tables that may be useful for testing other DotNetTables programs.
+ExampleClient and ExampleServer provide very simple usage examples as well as automatically-updating tables that may be useful for testing other DotNetTables programs.
 
 TableViewer is full GUI implementation that can act as a server or client and can publish or subscribe to arbitrary DotNetTables tables, displaying them (and allowing edits to published tables) and logging each update to disk. It provides examples of integration with .NET structures (like the DataGridView) and may be useful in debugging and prototyping.
