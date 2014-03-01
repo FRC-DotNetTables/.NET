@@ -112,7 +112,7 @@ Public Class DotNetTable
         End If
 
         If _updateInterval >= 0 Then
-            timer.Interval = (_updateInterval * 1000)
+            timer.Interval = (_updateInterval)
             timer.Start()
         End If
     End Sub
@@ -282,15 +282,6 @@ Public Class DotNetTable
         Return out
     End Function
 
-
-
-    '* Update with new data from a remote subscribed table
-    '*
-    '* @param itable The underlying NetworkTable table
-    '* @param key The array name -- must match our name to trigger an update
-    '* @param value The new or updated array
-    '* @param isNew True if the array did not previous exist
-
     Public Sub valueChanged(itable As ITable, key As String, val As Object, isNew As Boolean) Implements ITableListener.valueChanged
         'skip updates for other tables
         If _name <> key Then
@@ -303,15 +294,12 @@ Public Class DotNetTable
         recv(value)
     End Sub
 
-
     Public Event changed(table As DotNetTable)
     Public Event stale(table As DotNetTable)
 
     Public Interface DotNetTableEvents
-
         Sub changed(table As DotNetTable)
         Sub stale(table As DotNetTable)
-
     End Interface
 
 End Class
