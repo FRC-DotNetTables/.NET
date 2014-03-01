@@ -206,7 +206,11 @@ Public Class DotNetTable
         getValue = Nothing
         Dim row As DataRow = _data.Rows.Find(key)
         If (row IsNot Nothing) Then
-            getValue = row(VALUE_COLUMN)
+            If (IsDBNull(row(VALUE_COLUMN))) Then
+                getValue = ""
+            Else
+                getValue = row(VALUE_COLUMN)
+            End If
         End If
     End Function
 
@@ -253,13 +257,20 @@ Public Class DotNetTable
         Dim out As New StringArray
         Dim row As DataRow
         For Each row In _data.Rows
-            out.add(row(KEY_COLUMN))
+            If (Not IsDBNull(row(KEY_COLUMN))) Then
+                out.add(row(KEY_COLUMN))
+            End If
         Next
 
         'Use the output list of keys as the iterator to ensure correct value ordering
         Dim size As Integer = out.size
         For i = 0 To size - 1
-            out.add(_data.Rows.Find(out.get(i))(VALUE_COLUMN))
+            row = _data.Rows.Find(out.get(i))
+            If (IsDBNull(row(VALUE_COLUMN))) Then
+                out.add("")
+            Else
+                out.add(row(VALUE_COLUMN))
+            End If
         Next
 
         Return out
