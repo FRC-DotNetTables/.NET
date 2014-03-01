@@ -99,21 +99,21 @@ Public Class Tables
         Dim Key As String
         Dim Value As String
 
-        Key = TableDGV.CurrentRow.Cells("Key").Value
-        Value = TableDGV.CurrentRow.Cells("Value").Value
+        Key = TableDGV.CurrentRow.Cells(KEY_COLUMN).Value
+        Value = TableDGV.CurrentRow.Cells(VALUE_COLUMN).Value
 
         If Key <> "" Then
-            '    If Table.exists(Key) = True Then
-            '        For Each row As DataGridViewRow In TableDGV.Rows
-            '            If row.Index <> TableDGV.CurrentRow.Index Then
-            '                If row.Cells("Key").Value = Key Then
-            '                    MsgBox("This key alredy exists.", MsgBoxStyle.Exclamation, "Duplicate Key")
-            '                    TableDGV.Rows.Remove(TableDGV.CurrentRow)
-            '                    Exit Sub
-            '                End If
-            '            End If
-            '        Next
-            '    End If
+            If (Table.exists(Key)) Then
+                For Each row As DataGridViewRow In TableDGV.Rows
+                    If row.Index <> TableDGV.CurrentRow.Index Then
+                        If row.Cells(KEY_COLUMN).Value = Key Then
+                            MsgBox("Key already exists: " & Key, MsgBoxStyle.Exclamation, "Duplicate Key")
+                            TableDGV.Rows.Remove(TableDGV.CurrentRow)
+                            Exit Sub
+                        End If
+                    End If
+                Next
+            End If
 
             Table.setValue(Key, Value)
             SendData()
