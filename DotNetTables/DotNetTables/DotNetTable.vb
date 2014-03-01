@@ -10,6 +10,8 @@ Public Class DotNetTable
 
     Public Const STALE_FACTOR As Double = 2.1
     Public Const UPDATE_INTERVAL As String = "_UPDATE_INTERVAL"
+    Public Const KEY As String = "Key"
+    Public Const VALUE As String = "Value"
     Private _name As String
     Private _updateInterval As Integer
     Private _writable As Boolean
@@ -27,25 +29,25 @@ Public Class DotNetTable
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
 
-        ' DataTable with two columns "key" and "value"
+        ' DataTable with two columns KEY and VALUE
         Me._data = New DataTable
         With Me._data
             Dim column As DataColumn
 
             column = New DataColumn
             column.DataType = System.Type.GetType("System.String")
-            column.ColumnName = "key"
+            column.ColumnName = KEY
             .Columns.Add(column)
 
             column = New DataColumn
             column.DataType = System.Type.GetType("System.String")
-            column.ColumnName = "value"
+            column.ColumnName = VALUE
             .Columns.Add(column)
         End With
 
-        ' Set "key" as the primary key
+        ' Set KEY as the primary key
         Dim col(0) As DataColumn
-        col(0) = _data.Columns("key")
+        col(0) = _data.Columns(KEY)
         _data.PrimaryKey = col
 
         Me.timer = New Timers.Timer
@@ -153,7 +155,7 @@ Public Class DotNetTable
             Dim col As ICollection(Of String) = New List(Of String)
             Dim row As DataRow
             For Each row In _data.Rows
-                col.Add(row("key"))
+                col.Add(row(KEY))
             Next
             Keys = col
         End Get
@@ -173,7 +175,7 @@ Public Class DotNetTable
         row = _data.Rows.Find(key)
         If (row Is Nothing) Then
             row = _data.NewRow()
-            row("key") = key
+            row(key) = key
             _data.Rows.Add(row)
         End If
 
@@ -251,7 +253,7 @@ Public Class DotNetTable
         Dim out As New StringArray
         Dim row As DataRow
         For Each row In _data.Rows
-            out.add(row("key"))
+            out.add(row(KEY))
         Next
 
         'Use the output list of keys as the iterator to ensure correct value ordering
@@ -274,8 +276,8 @@ Public Class DotNetTable
         Dim setSize As Integer = data.size / 2
         For i = 0 To setSize - 1
             Dim row As DataRow = out.NewRow()
-            row("key") = data.get(i)
-            row("value") = data.get(i + setSize)
+            row(KEY) = data.get(i)
+            row(VALUE) = data.get(i + setSize)
             out.Rows.Add(row)
         Next
 

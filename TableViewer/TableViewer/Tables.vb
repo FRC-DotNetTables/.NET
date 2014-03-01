@@ -103,17 +103,17 @@ Public Class Tables
         Value = TableDGV.CurrentRow.Cells("Value").Value
 
         If Key <> "" Then
-            If Table.exists(Key) = True Then
-                For Each row As DataGridViewRow In TableDGV.Rows
-                    If row.Index <> TableDGV.CurrentRow.Index Then
-                        If row.Cells("Key").Value = Key Then
-                            MsgBox("This key alredy exists.", MsgBoxStyle.Exclamation, "Duplicate Key")
-                            TableDGV.Rows.Remove(TableDGV.CurrentRow)
-                            Exit Sub
-                        End If
-                    End If
-                Next
-            End If
+            '    If Table.exists(Key) = True Then
+            '        For Each row As DataGridViewRow In TableDGV.Rows
+            '            If row.Index <> TableDGV.CurrentRow.Index Then
+            '                If row.Cells("Key").Value = Key Then
+            '                    MsgBox("This key alredy exists.", MsgBoxStyle.Exclamation, "Duplicate Key")
+            '                    TableDGV.Rows.Remove(TableDGV.CurrentRow)
+            '                    Exit Sub
+            '                End If
+            '            End If
+            '        Next
+            '    End If
 
             Table.setValue(Key, Value)
             SendData()
