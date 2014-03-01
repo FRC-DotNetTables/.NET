@@ -16,7 +16,7 @@ Public Class DotNetTable
     Private _updateInterval As Integer
     Private _writable As Boolean
     Private timer As Timers.Timer
-    Public _data As ConcurrentDictionary(Of String, String)
+    Public _data As DataTable
     Private changeCallback As DotNetTableEvents
     Private staleCallback As DotNetTableEvents
     Private _lastUpdate As Long
@@ -29,7 +29,24 @@ Public Class DotNetTable
         Me._updateInterval = -1
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
-        Me._data = New ConcurrentDictionary(Of String, String)
+        Me._data = New DataTable
+        With Me._data
+            Dim column As DataColumn
+
+            column = New DataColumn
+            column.DataType = System.Type.GetType("System.String")
+            column.ColumnName = "key"
+            .Columns.Add(column)
+
+            column = New DataColumn
+            column.DataType = System.Type.GetType("System.String")
+            column.ColumnName = "value"
+            .Columns.Add(column)
+        End With
+        Dim col(0) As DataColumn
+        col(0) = _data.Columns("key")
+        _data.PrimaryKey = col
+
         Me.timer = New Timers.Timer
         AddHandler timer.Elapsed, AddressOf TimerElaspsed
     End Sub
@@ -141,7 +158,7 @@ Public Class DotNetTable
 
     Public ReadOnly Property exists(key As String) As Boolean
         Get
-            exists = _data.ContainsKey(key)
+            exists = _data.Rows.Contains(key)
         End Get
     End Property
 
@@ -149,7 +166,19 @@ Public Class DotNetTable
     Public Sub setValue(key As String, value As String)
         throwIfNotWritable()
 
-        _data.AddOrUpdate(key, value, Function(key1, value1) value)
+        Dim foundRows() As DataRow
+        Dim row As DataRow
+        foundRows = table.Select("key = ‘key name’")
+
+        For i = 0 To foundRows.GetUpperBound(0)
+            row = foundRows(i)
+            Console.WriteLine(row("value"))
+        Next i
+
+        Dim row As DataRow = _data.NewRow
+        row("key") = key
+        row("value") = value
+        _data.Rows.Add(row)
 
         _lastUpdate = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds
     End Sub
