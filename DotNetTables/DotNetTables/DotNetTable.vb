@@ -10,8 +10,8 @@ Public Class DotNetTable
 
     Public Const STALE_FACTOR As Double = 2.1
     Public Const UPDATE_INTERVAL As String = "_UPDATE_INTERVAL"
-    Public Const KEY As String = "Key"
-    Public Const VALUE As String = "Value"
+    Public Const KEY_COLUMN As String = "Key"
+    Public Const VALUE_COLUMN As String = "Value"
     Private _name As String
     Private _updateInterval As Integer
     Private _writable As Boolean
@@ -29,25 +29,25 @@ Public Class DotNetTable
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
 
-        ' DataTable with two columns KEY and VALUE
+        ' DataTable with two columns KEY_COLUMN and VALUE_COLUMN
         Me._data = New DataTable
         With Me._data
             Dim column As DataColumn
 
             column = New DataColumn
             column.DataType = System.Type.GetType("System.String")
-            column.ColumnName = KEY
+            column.ColumnName = KEY_COLUMN
             .Columns.Add(column)
 
             column = New DataColumn
             column.DataType = System.Type.GetType("System.String")
-            column.ColumnName = VALUE
+            column.ColumnName = VALUE_COLUMN
             .Columns.Add(column)
         End With
 
-        ' Set KEY as the primary key
+        ' Set KEY_COLUMN as the primary key
         Dim col(0) As DataColumn
-        col(0) = _data.Columns(KEY)
+        col(0) = _data.Columns(KEY_COLUMN)
         _data.PrimaryKey = col
 
         Me.timer = New Timers.Timer
@@ -155,7 +155,7 @@ Public Class DotNetTable
             Dim col As ICollection(Of String) = New List(Of String)
             Dim row As DataRow
             For Each row In _data.Rows
-                col.Add(row(KEY))
+                col.Add(row(KEY_COLUMN))
             Next
             Keys = col
         End Get
@@ -175,12 +175,12 @@ Public Class DotNetTable
         row = _data.Rows.Find(key)
         If (row Is Nothing) Then
             row = _data.NewRow()
-            row(key) = key
+            row(KEY_COLUMN) = key
             _data.Rows.Add(row)
         End If
 
         ' Update
-        row("value") = value
+        row(VALUE_COLUMN) = value
 
         ' Bump the update timestamp
         _lastUpdate = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds
@@ -206,7 +206,7 @@ Public Class DotNetTable
         getValue = Nothing
         Dim row As DataRow = _data.Rows.Find(key)
         If (row IsNot Nothing) Then
-            getValue = row("value")
+            getValue = row(VALUE_COLUMN)
         End If
     End Function
 
@@ -253,13 +253,13 @@ Public Class DotNetTable
         Dim out As New StringArray
         Dim row As DataRow
         For Each row In _data.Rows
-            out.add(row(KEY))
+            out.add(row(KEY_COLUMN))
         Next
 
         'Use the output list of keys as the iterator to ensure correct value ordering
         Dim size As Integer = out.size
         For i = 0 To size - 1
-            out.add(_data.Rows.Find(out.get(i))("value"))
+            out.add(_data.Rows.Find(out.get(i))(VALUE_COLUMN))
         Next
 
         Return out
@@ -276,8 +276,8 @@ Public Class DotNetTable
         Dim setSize As Integer = data.size / 2
         For i = 0 To setSize - 1
             Dim row As DataRow = out.NewRow()
-            row(KEY) = data.get(i)
-            row(VALUE) = data.get(i + setSize)
+            row(KEY_COLUMN) = data.get(i)
+            row(VALUE_COLUMN) = data.get(i + setSize)
             out.Rows.Add(row)
         Next
 
