@@ -5,8 +5,6 @@ Imports java.lang
 Imports System.Collections.Concurrent
 Imports System.Timers
 
-
-
 Public Class DotNetTable
     Implements ITableListener
 
@@ -21,7 +19,6 @@ Public Class DotNetTable
     Private staleCallback As DotNetTableEvents
     Private _lastUpdate As Long
 
-
     Protected Friend Sub New(name As String, writable As Boolean)
         Me._lastUpdate = 0
         Me._name = name
@@ -29,6 +26,8 @@ Public Class DotNetTable
         Me._updateInterval = -1
         Me.changeCallback = Nothing
         Me.staleCallback = Nothing
+
+        ' DataTable with two columns "key" and "value"
         Me._data = New DataTable
         With Me._data
             Dim column As DataColumn
@@ -43,6 +42,8 @@ Public Class DotNetTable
             column.ColumnName = "value"
             .Columns.Add(column)
         End With
+
+        ' Set "key" as the primary key
         Dim col(0) As DataColumn
         col(0) = _data.Columns("key")
         _data.PrimaryKey = col
@@ -147,14 +148,16 @@ Public Class DotNetTable
         _data.Clear()
     End Sub
 
-
     Public ReadOnly Property Keys As ICollection(Of String)
         Get
-            Keys = _data.Keys
+            Dim col As ICollection(Of String) = New List(Of String)
+            Dim row As DataRow
+            For Each row In _data.Rows
+                col.Add(row("key"))
+            Next
+            Keys = col
         End Get
     End Property
-
-
 
     Public ReadOnly Property exists(key As String) As Boolean
         Get
@@ -162,24 +165,22 @@ Public Class DotNetTable
         End Get
     End Property
 
-
     Public Sub setValue(key As String, value As String)
         throwIfNotWritable()
 
-        Dim foundRows() As DataRow
+        ' Find or add
         Dim row As DataRow
-        foundRows = table.Select("key = ‘key name’")
+        row = _data.Rows.Find(key)
+        If (row Is Nothing) Then
+            row = _data.NewRow()
+            row("key") = key
+            _data.Rows.Add(row)
+        End If
 
-        For i = 0 To foundRows.GetUpperBound(0)
-            row = foundRows(i)
-            Console.WriteLine(row("value"))
-        Next i
-
-        Dim row As DataRow = _data.NewRow
-        row("key") = key
+        ' Update
         row("value") = value
-        _data.Rows.Add(row)
 
+        ' Bump the update timestamp
         _lastUpdate = (DateTime.Now - New DateTime(1970, 1, 1)).TotalMilliseconds
     End Sub
 
@@ -193,28 +194,27 @@ Public Class DotNetTable
 
     Public Sub remove(key As String)
         throwIfNotWritable()
-        Dim Value As String = ""
-        _data.TryRemove(key, Value)
+        Dim row As DataRow = _data.Rows.Find(key)
+        If (row IsNot Nothing) Then
+            row.Delete()
+        End If
     End Sub
 
     Public Function getValue(key As String) As String
-        getValue = _data.Item(key)
+        getValue = Nothing
+        Dim row As DataRow = _data.Rows.Find(key)
+        If (row IsNot Nothing) Then
+            getValue = row("value")
+        End If
     End Function
 
     Public Function getDouble(key As String) As Double
-        Double.TryParse(_data.Item(key), getDouble)
+        Double.TryParse(getValue(key), getDouble)
     End Function
 
     Public Function getInt(key As String) As Integer
-        Integer.TryParse(_data.Item(key), getInt)
+        Integer.TryParse(getValue(key), getInt)
     End Function
-
-
-
-
-
-
-
 
     Private Sub recv(value As StringArray)
         'unpack the new data
@@ -224,7 +224,7 @@ Public Class DotNetTable
         'note the published update interval
         If exists(UPDATE_INTERVAL) Then
             _updateInterval = getInt(UPDATE_INTERVAL)
-            _data.TryRemove(UPDATE_INTERVAL, "")
+            _data.Rows.Find(UPDATE_INTERVAL).Delete()
             resetTimer()
         End If
 
@@ -233,7 +233,6 @@ Public Class DotNetTable
             changeCallback.changed(Me)
         End If
     End Sub
-
 
     Public Sub send()
         throwIfNotWritable()
@@ -248,26 +247,25 @@ Public Class DotNetTable
 
     End Sub
 
-
-
-    Private Function HMtoSA(data As ConcurrentDictionary(Of String, String)) As StringArray
+    Private Function HMtoSA(data As DataTable) As StringArray
         Dim out As New StringArray
-        For Each key In data.Keys
-            out.add(key)
+        Dim row As DataRow
+        For Each row In _data.Rows
+            out.add(row("key"))
         Next
 
         'Use the output list of keys as the iterator to ensure correct value ordering
         Dim size As Integer = out.size
         For i = 0 To size - 1
-            out.add(data.Item(out.get(i)))
+            out.add(_data.Rows.Find(out.get(i))("value"))
         Next
 
         Return out
     End Function
 
-
-    Private Function SAtoHM(data As StringArray) As ConcurrentDictionary(Of String, String)
-        Dim out As New ConcurrentDictionary(Of String, String)
+    Private Function SAtoHM(data As StringArray) As DataTable
+        Dim out As New DataTable
+        out = _data.Clone
 
         If data.size Mod 2 <> 0 Then
             Throw New ArrayIndexOutOfBoundsException("StringArray contains an odd number of elements")
@@ -275,7 +273,10 @@ Public Class DotNetTable
 
         Dim setSize As Integer = data.size / 2
         For i = 0 To setSize - 1
-            out.AddOrUpdate(data.get(i), data.get(i + setSize), Function(key, value) value)
+            Dim row As DataRow = out.NewRow()
+            row("key") = data.get(i)
+            row("value") = data.get(i + setSize)
+            out.Rows.Add(row)
         Next
 
         Return out
