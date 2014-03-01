@@ -74,9 +74,7 @@ Public Class Tables
     End Sub
 
     Private Sub UpdateForm()
-        Dim MyArray As Array
-        MyArray = Table._data.ToArray
-        TableDGV.DataSource = MyArray
+        TableDGV.DataSource = Table._data
         UpdateLabels()
     End Sub
 
