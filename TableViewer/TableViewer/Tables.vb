@@ -102,14 +102,17 @@ Public Class Tables
         Key = TableDGV.CurrentRow.Cells(KEY_COLUMN).Value
         Value = TableDGV.CurrentRow.Cells(VALUE_COLUMN).Value
 
+        If Key Is Nothing Or Value Is Nothing Then
+            Exit Sub
+        End If
+
         If Key <> "" Then
             If (Table.exists(Key)) Then
                 For Each row As DataGridViewRow In TableDGV.Rows
                     If row.Index <> TableDGV.CurrentRow.Index Then
                         If row.Cells(KEY_COLUMN).Value = Key Then
-                            MsgBox("Key already exists: " & Key, MsgBoxStyle.Exclamation, "Duplicate Key")
-                            TableDGV.Rows.Remove(TableDGV.CurrentRow)
-                            Exit Sub
+                            'MsgBox("Key already exists: " & Key, MsgBoxStyle.Exclamation, "Duplicate Key")
+                            TableDGV.Rows.Remove(row)
                         End If
                     End If
                 Next
@@ -141,6 +144,7 @@ Public Class Tables
                 End Try
             End Try
         Next
+        SendData()
     End Sub
 
     Private Sub Subscribed_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
