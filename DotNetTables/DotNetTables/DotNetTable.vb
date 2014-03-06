@@ -115,6 +115,9 @@ Public Class DotNetTable
 
         If _updateInterval >= 0 Then
             timer.Interval = (_updateInterval)
+            If Not iswritable Then
+                timer.Interval = (_updateInterval * STALE_FACTOR)
+            End If
             timer.Start()
         End If
     End Sub
